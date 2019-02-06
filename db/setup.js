@@ -3,7 +3,6 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-console.log("testing db connection");
 console.log(process.env.DATABASE_URL);
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL
@@ -22,8 +21,9 @@ const queryText =
   `CREATE TABLE IF NOT EXISTS
     accounts(
       id UUID PRIMARY KEY,
-      password VARCHAR(128),
       email VARCHAR(128),
+      password VARCHAR(128),
+      name VARCHAR(128),
       created_date TIMESTAMP,
       modified_date TIMESTAMP
     )`;

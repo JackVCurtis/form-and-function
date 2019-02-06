@@ -4,13 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dbsetup": "node ./db/setup.js",
+    "start": "node ./server/index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^3.0.3",
+    "body-parser": "^1.18.3",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
-    "pg": "^7.8.0"
+    "moment": "^2.24.0",
+    "pg": "^7.8.0",
+    "uuid": "^3.3.2"
   }
 }
