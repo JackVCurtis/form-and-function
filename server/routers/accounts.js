@@ -1,19 +1,31 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+
 const AccountService = require('../services/accountService');
 
+dotenv.config();
 const accountRouter = express.Router();
 
 accountRouter.route('/accounts')
     .post(async function(req, res) {
         try {
             const account = await AccountService.create(req.body);
+            const token = jwt.sign({sub: account.id}, process.env.JWT_SECRET);
+            res.cookie('authorization',token);
             res.json(account);            
         } catch (error) {
             res.status(500).send(error);
         }
     });
 
-
+accountRouter.use('/accounts/:id', async function(req, res, next) {
+    if (req.user.sub != req.params.id) {
+        res.status(401).send({});
+    } else {
+        next();
+    }
+})
 accountRouter.route('/accounts/:id')
     .get(async function(req, res) {
         try {

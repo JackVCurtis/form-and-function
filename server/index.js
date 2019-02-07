@@ -1,11 +1,20 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const accountRouter = require('./routers/accounts');
+const expressJwt = require('express-jwt');
+const dotenv = require('dotenv');
 
+const accountRouter = require('./routers/accounts');
+const loginRouter = require('./routers/login');
 const app = express();
 
-app.use(bodyParser.json());
+dotenv.config();
 
+app.use(bodyParser.json());
+app.use('/api', expressJwt({secret: process.env.JWT_SECRET}).unless({path: [
+    '/api/login',
+    { url: '/api/accounts', methods: ['POST'] }
+]}));
+app.use('/api', loginRouter);
 app.use('/api', accountRouter);
 
 app.use('/*', function(req, res) {

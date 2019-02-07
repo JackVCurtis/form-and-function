@@ -15,8 +15,7 @@ const AccountService = {
         const values = [
             uuidv4(),
             account.email,
-            // need to switch to async version for performance
-            bcrypt.hashSync(account.password, 10),
+            await bcrypt.hash(account.password, 10),
             account.name,
             moment(new Date()),
             moment(new Date)
@@ -31,7 +30,7 @@ const AccountService = {
     },
 
     get: async function(id) {
-        const queryString = `SELECT * FROM accounts WHERE ID = $1 LIMIT 1`;
+        const queryString = `SELECT * FROM accounts WHERE id = $1 LIMIT 1`;
         isUuid(id);
 
         return await AccountService.queryOne(queryString, [id]);
@@ -57,10 +56,21 @@ const AccountService = {
     },
 
     delete: async function(id) {
-        const queryString = `DELETE FROM accounts WHERE ID = $1 RETURNING *`;
+        const queryString = `DELETE FROM accounts WHERE id = $1 RETURNING *`;
         isUuid(id);
 
         return await AccountService.queryOne(queryString, [id]);
+    },
+
+    login: async function(email, password) {
+        const queryString = `SELECT * FROM accounts WHERE email = $1 LIMIT 1`
+        const account = await AccountService.queryOne(queryString, [email], {toJson: false});
+        if (account) {
+            const match = await bcrypt.compare(password, account.password);
+            return match ? account : match;
+        } else {
+            return false;
+        }
     },
 
     toJson: function (account) {
@@ -72,7 +82,7 @@ const AccountService = {
         return accountJson;
     },
 
-    queryOne: async function (queryString, values) {
+    queryOne: async function (queryString, values, options) {
         var account;
 
         try {
@@ -91,7 +101,11 @@ const AccountService = {
             throw error;
         }
 
-        return AccountService.toJson(account);
+        if (options && options.toJson == false){
+            return account;
+        } else {
+            return AccountService.toJson(account);            
+        }
     }
 }
 
