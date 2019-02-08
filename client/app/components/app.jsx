@@ -10,9 +10,9 @@ class App extends React.Component {
         render() {
             return (
                 <BrowserRouter>
-                    <div>
+                    <div className="main">
                         <Route exact={true} path="/" render={() => {
-                            return AuthService.isLoggedIn() ? (<h1>Hello</h1>) : (<Redirect to="/login"/>)
+                            return AuthService.isLoggedIn() ? (<h2>Hello</h2>) : (<Redirect to="/login"/>)
                         }}/>
                         <Route path="/login" component={LoginForm}/>
                     </div>

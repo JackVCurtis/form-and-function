@@ -7,16 +7,16 @@ class LoginForm extends React.Component {
     constructor(props) {
         super(props);
         // The names of the form elements must match the name of the corresponding state property
-        this.state = {email: "", password: ""};
+        this.state = {loggedIn: AuthService.isLoggedIn(), form: {email: "", password: ""}};
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     render() {
         return (
-           AuthService.isLoggedIn() ? (<Redirect to="/"/>) : (
+            this.state.loggedIn ? (<Redirect to="/"/>) : (
                 <div>
-                    <h3>Login</h3>
+                    <h2>Login</h2>
 
                     <form>
                         <label htmlFor="email">Email</label>
@@ -25,7 +25,7 @@ class LoginForm extends React.Component {
                         <label htmlFor="password">Password</label>
                         <input type="text" password="" name="password" value={this.state.password} onChange={this.handleChange}/>
 
-                        <div className="button" onClick={this.handleSubmit} style={{padding: "5px", border: "1px solid black"}}>Login</div>
+                        <div className="button" onClick={this.handleSubmit}>Login</div>
                     </form>
                 </div>
             )
@@ -34,12 +34,19 @@ class LoginForm extends React.Component {
     }
 
     handleChange(event) {
-        this.state[event.target.name] = event.target.value;
+        this.state.form[event.target.name] = event.target.value;
         this.setState(this.state);
     }
 
     async handleSubmit() {
-      await AccountService.login(this.state.email, this.state.password);
+        try {
+            await AccountService.login(this.state.form.email, this.state.form.password);
+            this.state.loggedIn = AuthService.isLoggedIn();
+            this.setState(this.state);
+        } catch (err) {
+
+        }
+
     }
 };
 

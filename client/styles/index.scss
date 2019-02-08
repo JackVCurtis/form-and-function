@@ -1,5 +1,52 @@
 @import 'reset';
 
+html {
+    height: 100%;
+}
+
 body {
+    background-color: #edeef2;
+    font-family:Arial, sans-serif;
+    font-size: 1em;
+    height: 100%;
+    margin-left: 15%;
+    margin-right: 15%;
     text-align: center;
+}
+
+div {
+    background-color: white;
+    height: 100%;
+}
+
+.main {
+    padding-left: 2em;
+    padding-right: 2em;    
+}
+
+h2 {
+    font-size: 1.5em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+form {
+    label {
+        display: block;
+        margin: 0.5em;
+    }
+    input {
+        border: 1px solid black;
+        border-radius: 5px;
+        display: block;
+        margin: 0.5em auto;
+        padding: 0.5em;
+    }
+
+    .button {
+        padding: 0.5em;
+        border: 1px solid black;
+        margin: 1.5em auto 0.5em auto;
+        width: 25%;
+    }
 }
