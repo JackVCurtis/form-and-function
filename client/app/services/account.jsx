@@ -11,6 +11,11 @@ const AccountService = {
     },
 
     signup: async function(name, email, password) {
+        const res = await axios.post('/api/accounts', {
+            name: name,
+            email: email,
+            password: password
+        });
 
     }
 };

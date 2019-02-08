@@ -1,9 +1,9 @@
 import React from 'react';
-import {Redirect} from 'react-router-dom';
+import {Redirect, Link} from 'react-router-dom';
 import AccountService from '../services/account.jsx';
 import AuthService from '../services/auth.jsx';
 
-class LoginForm extends React.Component {
+class Login extends React.Component {
     constructor(props) {
         super(props);
         // The names of the form elements must match the name of the corresponding state property
@@ -13,24 +13,23 @@ class LoginForm extends React.Component {
     }
 
     render() {
-        return (
-            this.state.loggedIn ? (<Redirect to="/"/>) : (
-                <div>
-                    <h2>Login</h2>
+        return this.state.loggedIn ? (<Redirect to="/"/>) : (
+            <div>
+                <h2>Login</h2>
+                
+                <p>Don't have an account? <Link to="/signup">Signup here</Link></p>
 
-                    <form>
-                        <label htmlFor="email">Email</label>
-                        <input type="text" name="email" value={this.state.email} onChange={this.handleChange}/>
-                    
-                        <label htmlFor="password">Password</label>
-                        <input type="text" password="" name="password" value={this.state.password} onChange={this.handleChange}/>
+                <form>
+                    <label htmlFor="email">Email</label>
+                    <input type="text" name="email" value={this.state.form.email} onChange={this.handleChange}/>
+                
+                    <label htmlFor="password">Password</label>
+                    <input type="text" password="" name="password" value={this.state.form.password} onChange={this.handleChange}/>
 
-                        <div className="button" onClick={this.handleSubmit}>Login</div>
-                    </form>
-                </div>
-            )
-           
-        )
+                    <div className="button" onClick={this.handleSubmit}>Login</div>
+                </form>
+            </div>
+        )           
     }
 
     handleChange(event) {
@@ -50,4 +49,4 @@ class LoginForm extends React.Component {
     }
 };
 
-export default LoginForm;
+export default Login;
