@@ -8,7 +8,7 @@ const loginRouter = express.Router();
 dotenv.config();
 
 loginRouter.route('/login')
-    .post(async function(req, res) {
+    .put(async function(req, res) {
         try {
             const account = await AccountService.login(req.body.email, req.body.password);
             if (account) {
