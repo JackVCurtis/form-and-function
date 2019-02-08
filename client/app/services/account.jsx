@@ -8,7 +8,6 @@ const AccountService = {
             password: password
         });
 
-        console.log(res);
     },
 
     signup: async function(name, email, password) {

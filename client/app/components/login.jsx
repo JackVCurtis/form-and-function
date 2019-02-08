@@ -1,6 +1,7 @@
 import React from 'react';
-
+import {Redirect} from 'react-router-dom';
 import AccountService from '../services/account.jsx';
+import AuthService from '../services/auth.jsx';
 
 class LoginForm extends React.Component {
     constructor(props) {
@@ -13,18 +14,22 @@ class LoginForm extends React.Component {
 
     render() {
         return (
-            <div>
-            <h3>Login</h3>
-            <form>
-                <label htmlFor="email">Email</label>
-                <input type="text" name="email" value={this.state.email} onChange={this.handleChange}/>
- 
-                <label htmlFor="password">Password</label>
-                <input type="text" password="" name="password" value={this.state.password} onChange={this.handleChange}/>
+           AuthService.isLoggedIn() ? (<Redirect to="/"/>) : (
+                <div>
+                    <h3>Login</h3>
 
-                <div className="button" onClick={this.handleSubmit} style={{padding: "5px", border: "1px solid black"}}>Login</div>
-            </form>
-            </div>
+                    <form>
+                        <label htmlFor="email">Email</label>
+                        <input type="text" name="email" value={this.state.email} onChange={this.handleChange}/>
+                    
+                        <label htmlFor="password">Password</label>
+                        <input type="text" password="" name="password" value={this.state.password} onChange={this.handleChange}/>
+
+                        <div className="button" onClick={this.handleSubmit} style={{padding: "5px", border: "1px solid black"}}>Login</div>
+                    </form>
+                </div>
+            )
+           
         )
     }
 
