@@ -74,15 +74,15 @@ const AccountService = {
         }
     },
 
-    validate: async function(account, allFields) {
+    validate: async function(account) {
         const results = await ValidatorService.validate(account, [
             {fields: ["email"], validators: ["isUnique:accounts,email", "exists", "isEmailFormat"]},
             {fields: ["name"], validators: ["exists"]},
             {fields: ["password"], validators: ["exists", "isSecurePass"]},
             {fields: ["password", "confirmPassword"], validators: ["matches"]}
-        ], allFields);
+        ]);
 
-        return results.filter((r) => {return !r.result; });
+        return results;
     },
 
     toJson: function (account) {

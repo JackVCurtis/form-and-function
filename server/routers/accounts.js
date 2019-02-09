@@ -2,30 +2,21 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 
+const validateWith = require('../middleware/validateWith');
 const AccountService = require('../services/accountService');
 
 dotenv.config();
 const accountRouter = express.Router();
 
 accountRouter.route('/accounts')
-    .post(async function(req, res) {
-        if (Number.parseInt(req.headers.validate)) {
-            res.json(await AccountService.validate(req.body, false));
-        } else {
-            const errors = await AccountService.validate(req.body, true);
-
-            if (errors.length) {
-                res.status(400).json(errors);
-            } else {
-                try {
-                    const account = await AccountService.create(req.body);
-                    const token = jwt.sign({sub: account.id}, process.env.JWT_SECRET);
-                    res.cookie('authorization',token);
-                    res.json(account);            
-                } catch (error) {
-                    res.status(500).send(error);
-                }
-            }
+    .post(validateWith(AccountService.validate), async function(req, res) {
+        try {
+            const account = await AccountService.create(req.body);
+            const token = jwt.sign({sub: account.id}, process.env.JWT_SECRET);
+            res.cookie('authorization',token);
+            res.json(account);            
+        } catch (error) {
+            res.status(500).send(error);
         }
     });
 
@@ -45,23 +36,12 @@ accountRouter.route('/accounts/:id')
             res.status(error.status).send(error);
         }
     })
-    .put(async function(req, res) {
-        if (Number.parseInt(req.headers.validate)) {
-            res.json(await AccountService.validate(req.body, false));
-        } else {
-            const errors = await AccountService.validate(req.body, true);
-
-            if (errors.length) {
-                res.status(400).json(errors);
-            } else {
-                try {
-                    const account = await AccountService.update(req.params.id, req.body);
-                    res.json(account);
-                } catch (error) {
-                    console.log(error);
-                    res.status(error.status).send(error);
-                }
-            }
+    .put(validateWith(AccountService.validate), async function(req, res) {
+        try {
+            const account = await AccountService.update(req.params.id, req.body);
+            res.json(account);
+        } catch (error) {
+            res.status(error.status).send(error);
         }
     })
     .delete(async function(req, res) {
