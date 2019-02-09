@@ -2,6 +2,7 @@ const uuidv4 = require('uuid/v4');
 const moment = require('moment');
 const bcrypt = require('bcrypt');
 const pool = require('./db.js');
+const ValidatorService = require('./validatorService');
 
 const AccountService = {
     columns: ["id", "email", "password", "name", "created_date", "modified_date"],
@@ -71,6 +72,17 @@ const AccountService = {
         } else {
             return false;
         }
+    },
+
+    validate: async function(account, allFields) {
+        const results = await ValidatorService.validate(account, [
+            {fields: ["email"], validators: ["isUnique:accounts,email", "exists", "isEmailFormat"]},
+            {fields: ["name"], validators: ["exists"]},
+            {fields: ["password"], validators: ["exists", "isSecurePass"]},
+            {fields: ["password", "confirmPassword"], validators: ["matches"]}
+        ], allFields);
+
+        return results.filter((r) => {return !r.result; });
     },
 
     toJson: function (account) {
