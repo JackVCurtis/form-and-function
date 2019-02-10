@@ -2,6 +2,7 @@ import React from 'react';
 import {Redirect, Link} from 'react-router-dom';
 import AccountService from '../services/account.jsx';
 import AuthService from '../services/auth.jsx';
+import ValidatorService from '../services/validatorService.jsx';
 
 class Signup extends React.Component {
     constructor(props) {
@@ -44,13 +45,19 @@ class Signup extends React.Component {
     }
 
     async handleSubmit() {
-        try {
-            await AccountService.signup(this.state.form.name, this.state.form.email, this.state.form.password);
-            this.state.signedUp = true;
-            this.setState(this.state);
-        } catch (err) {
+        console.log(await ValidatorService.validate(this.state.form, [
+            {fields: ["email"], validators: ["isUnique:accounts,email", "exists", "isEmailFormat"], endpoint: "POST /api/accounts"},
+            {fields: ["name"], validators: ["exists"]},
+            {fields: ["password"], validators: ["exists", "isSecurePass"]},
+            {fields: ["password", "confirmPassword"], validators: ["matches"]}
+        ], "post /api/accounts"))
+        // try {
+        //     await AccountService.signup(this.state.form.name, this.state.form.email, this.state.form.password);
+        //     this.state.signedUp = true;
+        //     this.setState(this.state);
+        // } catch (err) {
 
-        }
+        // }
 
     }
 };

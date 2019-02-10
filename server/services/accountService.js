@@ -18,7 +18,7 @@ const AccountService = {
 
     create: {
         validations: [
-            {fields: ["email"], validators: ["isUnique:accounts,email", "exists", "isEmailFormat"]},
+            {fields: ["email"], validators: ["isUnique:accounts,email", "exists", "isEmailFormat"], endpoint: "POST /api/accounts"},
             {fields: ["name"], validators: ["exists"]},
             {fields: ["password"], validators: ["exists", "isSecurePass"]},
             {fields: ["password", "confirmPassword"], validators: ["matches"]}

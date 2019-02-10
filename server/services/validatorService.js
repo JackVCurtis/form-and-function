@@ -1,7 +1,6 @@
 const pool = require('./db.js');
-
+const syncValidators = require('../../shared/syncValidators');
 const ValidatorService = {
-    // Only validates the provided fields unless "all" is true
     validate: function(object, validations) {
         return new Promise((resolve, reject) => {
             const results = validations.map(function (validation) {
@@ -45,9 +44,7 @@ const ValidatorService = {
                             resolvedResultPromises = allResultPromises.filter((p) => {return !p.isPending(); })
 
                             if (allResultPromises.length == resolvedResultPromises.length) {
-                                const filteredResults = resolvedResults.filter((r) => {return !r.result; })
-
-                                resolve(filteredResults);
+                                resolve(resolvedResults);
                             }
  
                         }).catch((e) => {reject(e)});
@@ -84,32 +81,11 @@ const ValidatorService = {
              result.isRejected = function() { return isRejected; };
              return result;
         }
-
-        function hasAllFields(result, object) {
-            const presentFields = result.fields.filter(function(field) { 
-                return object.hasOwnProperty(field); 
-            });
-
-            return presentFields.length == result.fields.length
-        }
     }
 
 };
 
-const validators = {
-    exists: function (value) {
-        return !!value; //Placeholder hack - needs to be more explicit
-    },
-    isEmailFormat: function (value) {
-        return !!value && value.match(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/).length > 0;
-    },
-    isSecurePass: function (value) {
-        return !!value && value.length >= 12;
-    },
-    matches: function (value1, value2) {
-        return !!value1 && !!value2 && value1 == value2;
-    }
-}
+const validators = syncValidators;
 
 const asyncValidators = {
     isUnique: async function (value, table, field) {
