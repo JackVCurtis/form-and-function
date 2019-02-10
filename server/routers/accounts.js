@@ -2,19 +2,21 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 
-const validateWith = require('../middleware/validateWith');
-const describeWith = require('../middleware/describeWith');
-const filterMetaRequest = require('../middleware/filterMetaRequest');
+const supportMeta = require('../middleware/supportMeta');
 const AccountService = require('../services/accountService');
 
 dotenv.config();
 const accountRouter = express.Router();
 
 accountRouter.route('/accounts')
-    .post(        
-        validateWith(AccountService.create.validate),
-        describeWith(AccountService.create.describe), 
-        filterMetaRequest,
+    .post(supportMeta({
+            validations: [
+                {fields: ["email"], validators: ["isUnique:accounts,email", "exists", "isEmailFormat"], endpoint: "POST /api/accounts"},
+                {fields: ["name"], validators: ["exists"]},
+                {fields: ["password"], validators: ["exists", "isSecurePass"]},
+                {fields: ["password", "confirmPassword"], validators: ["matches"]}
+            ]
+        }),
         async function(req, res) {
             try {
                 const account = await AccountService.create(req.body);

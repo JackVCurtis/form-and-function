@@ -16,41 +16,24 @@ const AccountService = {
         return await AccountService.queryOne(queryString, [id]);
     },
 
-    create: {
-        validations: [
-            {fields: ["email"], validators: ["isUnique:accounts,email", "exists", "isEmailFormat"], endpoint: "POST /api/accounts"},
-            {fields: ["name"], validators: ["exists"]},
-            {fields: ["password"], validators: ["exists", "isSecurePass"]},
-            {fields: ["password", "confirmPassword"], validators: ["matches"]}
-        ],
-        describe: function() {
-            return {
-                validations: AccountService.create.validations
-            }
-        },
-        validate: async function(account) {
-            const results = await ValidatorService.validate(account, AccountService.create.validations);
-            return results;
-        },
-        run: async function(account) {
-            const queryString = `INSERT INTO accounts (${AccountService.columns.join(", ")})
-                VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
-            `
-            const values = [
-                uuidv4(),
-                account.email,
-                await bcrypt.hash(account.password, 10),
-                account.name,
-                moment(new Date()),
-                moment(new Date)
-            ];
+    create: async function(account) {
+        const queryString = `INSERT INTO accounts (${AccountService.columns.join(", ")})
+            VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
+        `
+        const values = [
+            uuidv4(),
+            account.email,
+            await bcrypt.hash(account.password, 10),
+            account.name,
+            moment(new Date()),
+            moment(new Date)
+        ];
 
-            try {
-                const result = await pool.query(queryString, values);
-                return AccountService.toJson(result.rows[0]);            
-            } catch (error) {
-                throw error;
-            }
+        try {
+            const result = await pool.query(queryString, values);
+            return AccountService.toJson(result.rows[0]);            
+        } catch (error) {
+            throw error;
         }
     },
 
