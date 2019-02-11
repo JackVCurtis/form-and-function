@@ -5,20 +5,21 @@ const ValidatorService = {
         return new Promise((resolve, reject) => {
             const results = validations.map(function (validation) {
                 const validatorResults = new Promise((resolve, reject) => {
-                    resolve(validation.validators.map(function (validator) {
+                    resolve(validation.validators.map(function (validator, i) {
                         var result = new Promise((resolve, reject) => {
                             const values = validation.fields.map(function(field) { return object[field]; });
                             const validatorArray = validator.split(":");
                             const validationFunction = validatorArray[0];
-                            const validatorArgs = validatorArray.length > 1 ? validatorArray[1].split(",") : [];
+                            const validatorArgs = (validatorArray.length > 1 ? validatorArray[1].split(",") : [])
+                                .map((arg) => { return arg.match(/^\$/) ? object[arg.match(/(?<=\$)[\w]+/)[0]] : arg});
                             const args = values.concat(validatorArgs);
 
                             if (asyncValidators.hasOwnProperty(validationFunction)) {
                                 asyncValidators[validationFunction](...args).then((result) => {
-                                    resolve({fields: validation.fields, validator: validator, result: result, message: validation.message});
+                                    resolve({fields: validation.fields, validator: validator, result: result, message: validation.messages[i]});
                                 });
                             } else if (validators.hasOwnProperty(validationFunction)) {
-                                resolve({fields: validation.fields, validator: validator, result:validators[validationFunction](...args), message: validation.message});
+                                resolve({fields: validation.fields, validator: validator, result:validators[validationFunction](...args), message: validation.messages[i]});
                             } else {
                                 reject(new Error("Missing validation"));
                             }

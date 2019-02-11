@@ -11,10 +11,14 @@ const accountRouter = express.Router();
 accountRouter.route('/accounts')
     .post(supportMeta({
             validations: [
-                {fields: ["email"], validators: ["isUnique:accounts,email", "exists", "isEmailFormat"], endpoint: "POST /api/accounts"},
-                {fields: ["name"], validators: ["exists"]},
-                {fields: ["password"], validators: ["exists", "isSecurePass"]},
-                {fields: ["password", "confirmPassword"], validators: ["matches"]}
+                {
+                    fields: ["email"], 
+                    validators: ["isUnique:accounts,email", "exists", "isEmailFormat"],
+                    messages: ["Email is already in use", "An email is required", "Please enter a valid email"]
+                },
+                {fields: ["name"], validators: ["exists"], messages: ["A name is required"]},
+                {fields: ["password"], validators: ["exists", "isSecurePass"], messages: ["A password is required", "Password must be at least 12 characters"]},
+                {fields: ["confirmPassword"], validators: ["matches:$password"], messages: ["Password and Confirm Password fields don't match"]}
             ]
         }),
         async function(req, res) {

@@ -29,15 +29,16 @@ const ValidatorService = {
         } else {
             results = new Promise((resolve, reject) => {
                 const syncResults = validations.flatMap((validation) => {
-                    return validation.validators.map((validator) => {
+                    return validation.validators.map((validator, i) => {
                         const values = validation.fields.map(function(field) { return object[field]; });
                         const validatorArray = validator.split(":");
                         const validationFunction = validatorArray[0];
-                        const validatorArgs = validatorArray.length > 1 ? validatorArray[1].split(",") : [];
+                        const validatorArgs = (validatorArray.length > 1 ? validatorArray[1].split(",") : [])
+                            .map((arg) => { return arg.match(/^\$/) ? object[arg.match(/(?<=\$)[\w]+/)[0]] : arg});
                         const args = values.concat(validatorArgs);
 
                         if (validators.hasOwnProperty(validationFunction)) {
-                            return {fields: validation.fields, validator: validator, result:validators[validationFunction](...args), message: validation.message};
+                            return {fields: validation.fields, validator: validator, result:validators[validationFunction](...args), message: validation.messages[i]};
                         } else {
                             reject(new Error("Missing validation"));
                         }
