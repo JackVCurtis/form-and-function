@@ -3,12 +3,24 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 
 const AccountService = require('../services/AccountService');
+const supportMeta = require('../middleware/supportMeta');
 
 const loginRouter = express.Router();
 dotenv.config();
 
 loginRouter.route('/login')
-    .put(async function(req, res) {
+    .put(
+        supportMeta({
+            validations: [
+                {
+                    fields: ["email"], 
+                    validators: ["exists", "isEmailFormat"],
+                    messages: ["An email is required", "Please enter a valid email"]
+                },
+                {fields: ["password"], validators: ["exists"], messages: ["A password is required"]},
+            ]               
+        }),
+        async function(req, res) {
         try {
             const account = await AccountService.login(req.body.email, req.body.password);
             if (account) {

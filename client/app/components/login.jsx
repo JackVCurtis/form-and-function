@@ -2,12 +2,31 @@ import React from 'react';
 import {Redirect, Link} from 'react-router-dom';
 import AccountService from '../services/account.jsx';
 import AuthService from '../services/auth.jsx';
+import Form from './form/form.jsx';
+
 
 class Login extends React.Component {
     constructor(props) {
         super(props);
-        // The names of the form elements must match the name of the corresponding state property
-        this.state = {loggedIn: AuthService.isLoggedIn(), form: {email: "", password: ""}};
+        this.form = {
+            submitText: "Log In",
+            fields: [
+                {
+                    name: "email",
+                    label: "Email",
+                    type: "text",
+                    default: ""
+                },
+                {
+                    name: "password",
+                    label: "Password",
+                    type: "password",
+                    default: ""
+                }
+            ]
+        };
+
+        this.state = {loggedIn: AuthService.isLoggedIn(), loginError: false};
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -19,15 +38,10 @@ class Login extends React.Component {
                 
                 <p>Don't have an account? <Link to="/signup">Signup here</Link></p>
 
-                <form>
-                    <label htmlFor="email">Email</label>
-                    <input type="text" name="email" value={this.state.form.email} onChange={this.handleChange}/>
-                
-                    <label htmlFor="password">Password</label>
-                    <input type="text" password="" name="password" value={this.state.form.password} onChange={this.handleChange}/>
+                <Form handleSubmit={this.handleSubmit} endpoint="PUT /api/login" definition={this.form}/>
 
-                    <div className="button" onClick={this.handleSubmit}>Login</div>
-                </form>
+                {this.state.loginError ? (<p className="error-message">Invalid email or password</p>) : ""}
+
             </div>
         )           
     }
@@ -37,13 +51,15 @@ class Login extends React.Component {
         this.setState(this.state);
     }
 
-    async handleSubmit() {
+    async handleSubmit(values) {
         try {
-            await AccountService.login(this.state.form.email, this.state.form.password);
+            await AccountService.login(values.email, values.password);
             this.state.loggedIn = AuthService.isLoggedIn();
             this.setState(this.state);
         } catch (err) {
-
+            this.state.loginError = true;
+            this.setState(this.state);
+            console.log(err);
         }
 
     }

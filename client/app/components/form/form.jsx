@@ -26,6 +26,7 @@ class Form extends React.Component {
         this.validations = undefined;
         this.state = {
             form: {
+                submitText: props.definition.submitText,
                 fields: this.generateFields(props.definition)
             }
         }
@@ -39,10 +40,10 @@ class Form extends React.Component {
 
     render() {
         return (
-                    <form>
+                    <form onKeyDown={this.handleSubmit}>
                         { this.state.form.fields.map(this.getComponent) }
 
-                        <div className={this.canSubmit() ? "button" : "button disabled"} onClick={this.handleSubmit}>Sign Up</div>
+                        <div type="submit" className={this.canSubmit() ? "button" : "button disabled"} onClick={this.handleSubmit}>{this.state.form.submitText}</div>
                     </form>
             )
     }
@@ -140,8 +141,8 @@ class Form extends React.Component {
         }
     }
 
-    handleSubmit() {
-        if (this.state.form.isValid) {
+    handleSubmit(e) {
+        if ((e.type == "click" || e.keyCode == 13) && this.state.form.isValid) {
             this.submitFunction(this.getValues());            
         }
     }

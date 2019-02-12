@@ -36,7 +36,11 @@ form {
         border-color: $error-color;
     }
 
-    label, .error-message {
+    label {
         color: $error-color;
     }
 }
+
+.error-message {
+        color: $error-color;
+    }
