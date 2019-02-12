@@ -19,11 +19,6 @@ div {
     height: 100%;
 }
 
-.main {
-    padding-left: 2em;
-    padding-right: 2em;    
-}
-
 h2 {
     font-size: 1.5em;
     padding-top: 1em;
@@ -34,4 +29,15 @@ p {
     margin: 0.5em auto;
 }
 
+ul {
+    padding: 0.5em;
+}
+
+li {
+    padding: 0.5em;    
+}
+
+
 @import 'form';
+@import 'home';
+@import 'menu';
