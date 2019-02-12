@@ -3,6 +3,11 @@ module.exports = {
         return !!value; //Placeholder hack - needs to be more explicit
     },
     isEmailFormat: function (value) {
+        try {
+            value.match
+        } catch(e) {
+            return false;
+        }
         const matchedVal = value.match(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/);
         return matchedVal != null;
     },

@@ -1,0 +1,42 @@
+$error-color: #e62e00;
+
+
+form {
+    margin: 2em auto;
+    
+    label {
+        display: block;
+        font-weight: bold;
+        margin: 0.5em;
+    }
+    input {
+        border: 1px solid black;
+        border-radius: 5px;
+        display: block;
+        margin: 0.5em auto;
+        padding: 0.5em;
+    }
+
+    .button {
+        background-color: #8c8c8c;
+        border-radius: 5px;
+        color: white;
+        padding: 0.5em;
+        margin: 1.5em auto 0.5em auto;
+        width: 25%;
+    }
+
+    .button.disabled {
+        background-color: #d9d9d9;
+    }
+}
+
+.form-group.has-error {
+    input {
+        border-color: $error-color;
+    }
+
+    label, .error-message {
+        color: $error-color;
+    }
+}

@@ -30,23 +30,8 @@ h2 {
     padding-bottom: 1em;
 }
 
-form {
-    label {
-        display: block;
-        margin: 0.5em;
-    }
-    input {
-        border: 1px solid black;
-        border-radius: 5px;
-        display: block;
-        margin: 0.5em auto;
-        padding: 0.5em;
-    }
-
-    .button {
-        padding: 0.5em;
-        border: 1px solid black;
-        margin: 1.5em auto 0.5em auto;
-        width: 25%;
-    }
+p {
+    margin: 0.5em auto;
 }
+
+@import 'form';

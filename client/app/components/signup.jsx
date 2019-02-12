@@ -15,22 +15,26 @@ class Signup extends React.Component {
                 {
                     name: "name",
                     label: "Name",
-                    type: "text"
+                    type: "text",
+                    default: ""
                 },
                 {
                     name: "email",
                     label: "Email",
-                    type: "text"
+                    type: "text",
+                    default: ""
                 },
                 {
                     name: "password",
                     label: "Password",
-                    type: "password"
+                    type: "password",
+                    default: ""
                 },
                 {
                     name: "confirmPassword",
                     label: "Confirm Password",
-                    type: "password"
+                    type: "password",
+                    default: ""
                 }
             ]
 

@@ -15,7 +15,7 @@ class Form extends React.Component {
                     name: string (matches api field),
                     type: string (input type),
                     label: string
-                    options: [] (optional, for radio and checkbox)
+                    options: [] (optional, for radio, checkbox and select)
                 }
             ]
         }
@@ -26,7 +26,6 @@ class Form extends React.Component {
         this.validations = undefined;
         this.state = {
             form: {
-                isValid: false,
                 fields: this.generateFields(props.definition)
             }
         }
@@ -43,7 +42,7 @@ class Form extends React.Component {
                     <form>
                         { this.state.form.fields.map(this.getComponent) }
 
-                        <div className="button" onClick={this.handleSubmit}>Sign Up</div>
+                        <div className={this.canSubmit() ? "button" : "button disabled"} onClick={this.handleSubmit}>Sign Up</div>
                     </form>
             )
     }
@@ -52,7 +51,7 @@ class Form extends React.Component {
         switch (field.type) {
             case 'text':
                 return (
-                    <div className="form-group" key={field.name}>
+                    <div key={field.name} className={ this.hasError(field.name) ? "form-group has-error" : "form-group"}>
                         <label htmlFor={field.name}>{field.label}</label>
                         <input type="text" name={field.name} value={this.getValue(field.name)} onChange={this.handleChange} onBlur={this.handleBlur}/>
                         { this.getErrorsFor(field.name) }
@@ -60,7 +59,7 @@ class Form extends React.Component {
                 );
             case 'password':
                 return (
-                    <div className="form-group" key={field.name}>
+                    <div key={field.name} className={ this.hasError(field.name) ? "form-group has-error" : "form-group"}>
                         <label htmlFor={field.name}>{field.label}</label>
                         <input type="password" name={field.name} value={this.getValue(field.name)} onChange={this.handleChange} onBlur={this.handleBlur}/>
                         { this.getErrorsFor(field.name) }
@@ -116,6 +115,7 @@ class Form extends React.Component {
 
                 input.errors = errors;
                 input.shouldValidate = errors.length > 0;
+                input.beenValidated = errors.length == 0;
             });
 
             this.state.form.isValid = results.filter((result) => {return !result.result}).length == 0;
@@ -141,7 +141,9 @@ class Form extends React.Component {
     }
 
     handleSubmit() {
-        this.submitFunction(this.getValues());
+        if (this.state.form.isValid) {
+            this.submitFunction(this.getValues());            
+        }
     }
 
     generateFields(definition) {
@@ -150,9 +152,10 @@ class Form extends React.Component {
                 name: def.name,
                 label: def.label,
                 type: def.type,
-                value: undefined,
+                value: def.default,
                 errors: [],
-                shouldValidate: false
+                shouldValidate: false,
+                beenValidated: false,
             }
         });
     }
@@ -166,6 +169,16 @@ class Form extends React.Component {
             obj[input.name] = input.value; 
             return obj;
         }, {});
+    }
+
+    canSubmit() {
+        return this.state.form.fields.reduce((acc, field) => { 
+            return field.beenValidated && acc
+        }, true);
+    }
+
+    hasError(name) {
+        return this.getErrorsFor(name).length > 0;            
     }
 
     getErrorsFor(name) {
