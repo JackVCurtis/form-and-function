@@ -1,7 +1,7 @@
 import React from 'react';
 import {BrowserRouter, Link, Route, Redirect} from 'react-router-dom';
 import Menu from './menu.jsx';
-import MyAccount from './account.jsx';
+import MyAccount from './myAccount.jsx';
 
 class Home extends React.Component {
     constructor(props){
@@ -20,7 +20,7 @@ class Home extends React.Component {
                     <h1 id="menu-link" onClick={this.openMenu}>Menu</h1>
                 </header>
                 <Menu open={this.state.menuOpen} close={this.closeMenu}/>
-                <Route path="/home" exact={true} render={() => {return (<p>Home page</p>)}}/>
+                <Route path="/home" exact={true} render={() => {return (<h2>Home page</h2>)}}/>
                 <Route path="/home/account" component={MyAccount}/>
             </div>
         );
