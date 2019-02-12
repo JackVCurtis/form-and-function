@@ -1,5 +1,7 @@
 @import 'reset';
 
+$mobile-breakpoint: 800px;
+
 html {
     height: 100%;
 }
@@ -9,9 +11,12 @@ body {
     font-family:Arial, sans-serif;
     font-size: 1em;
     height: 100%;
-    margin-left: 15%;
-    margin-right: 15%;
     text-align: center;
+
+    @media (min-width: $mobile-breakpoint){
+        margin-left: 15%;
+        margin-right: 15%;
+    }
 }
 
 div {

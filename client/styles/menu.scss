@@ -17,5 +17,11 @@
 
 .sidebar.open {
     border-left: 1px solid black;
-    width: 33%;
+    width: 50%;
+}
+
+.sidebar.open {
+    @media (min-width: $mobile-breakpoint){
+        width: 33%;
+    }
 }
