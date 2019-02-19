@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "dbsetup": "node ./db/setup.js",
     "start": "node ./server/index.js"
   },
@@ -37,6 +37,7 @@
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.5",
     "css-loader": "^2.1.0",
+    "jest": "^24.1.0",
     "natives": "^1.1.6",
     "node-sass": "^4.11.0",
     "react-router-dom": "^4.3.1",
