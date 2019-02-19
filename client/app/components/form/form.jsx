@@ -92,7 +92,6 @@ class Form extends React.Component {
 
     async validate() {
         if (this.validations) {
-            console.log("Running validate")
             const validationObject = this.getValues();
 
             const validations = this.validations.filter((validation) => {

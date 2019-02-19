@@ -33,8 +33,8 @@ const ValidatorService = {
                 return validatorResults;
             });
 
-            resolvedResults = [];
-            allResultPromises = [];
+            const resolvedResults = [];
+            const allResultPromises = [];
             results.forEach((resultArrayPromise, i) => {
                 resultArrayPromise.then((resultArray) => {                    
                     resultArray.forEach((resultPromise, j) => {

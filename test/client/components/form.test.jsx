@@ -180,5 +180,7 @@ describe('Form Component', () => {
         wrapper.find('input').first().simulate('blur', {target: {name: 'email'}})
         await instance.validate()
         expect(instance.getErrorsFor("email").length).toEqual(1)
+        wrapper.update()
+        expect(wrapper.find(".error-message").length).toEqual(1)
     })
 })
