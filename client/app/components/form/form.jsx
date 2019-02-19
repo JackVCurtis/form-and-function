@@ -92,6 +92,7 @@ class Form extends React.Component {
 
     async validate() {
         if (this.validations) {
+            console.log("Running validate")
             const validationObject = this.getValues();
 
             const validations = this.validations.filter((validation) => {
@@ -134,7 +135,6 @@ class Form extends React.Component {
                     meta_request: "describe"
                 }
             })
-
             this.validations = res.data.validations;
         } catch (e) {
             console.log("Could not fetch validations");

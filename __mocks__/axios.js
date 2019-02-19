@@ -23,8 +23,15 @@ const post = {
 }
 
 const axios = async function (req) {
+    var data = 'ok';
     await wait();
-    return {data: 'ok'};
+    if (req.data.meta_request == "describe") {
+        data = {
+            validations: []
+        };
+    }
+
+    return {data: data};
 }
 
 axios.put = async function(endpoint, req) {
