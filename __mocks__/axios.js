@@ -22,16 +22,19 @@ const post = {
     }
 }
 
-const axios = {
-    put: async function(endpoint, req) {
-        console.log(put[endpoint]);
-        const res = await put[endpoint](req);
-        return res;
-    },
-
-    post: async function(endpoint, req) {
-        return await post[endpoint](req);
-    }
+const axios = async function (req) {
+    await wait();
+    return {data: 'ok'};
 }
+
+axios.put = async function(endpoint, req) {
+    const res = await put[endpoint](req);
+    return res;
+},
+
+axios.post = async function(endpoint, req) {
+    return await post[endpoint](req);
+}
+
 
 export default axios;

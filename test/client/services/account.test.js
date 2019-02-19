@@ -1,5 +1,3 @@
-jest.mock('axios');
-
 import AccountService from '../../../client/app/services/account.jsx';
 
 describe('Account Service', () => {
