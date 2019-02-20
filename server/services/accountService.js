@@ -7,7 +7,7 @@ const ValidatorService = require('./validatorService');
 const AccountService = {
     columns: ["id", "email", "password", "name", "created_date", "modified_date"],
     jsonColumns: ["id", "email", "name", "created_date", "modified_date"],
-    updateColumns: ["email", "name"],
+    updateColumns: ["email", "name", "password"],
     
     get: async function(id) {
         const queryString = `SELECT * FROM accounts WHERE id = $1 LIMIT 1`;
@@ -31,7 +31,6 @@ const AccountService = {
 
         try {
             const result = await pool.query(queryString, values);
-            console.log("saved: ", result)
             return AccountService.toJson(result.rows[0]);
         } catch (error) {
             console.log(error)
@@ -42,6 +41,14 @@ const AccountService = {
     update: async function(id, account) {
         const oldAccount = await AccountService.get(id);
         const updatedValues = AccountService.updateColumns.map(function(column) { return account[column] || oldAccount[column]; })
+
+        const passwordIndex = AccountService.updateColumns.findIndex(f => f == "password")
+        const newPassword = updatedValues[passwordIndex]
+
+        if (newPassword != oldAccount["password"]) {
+            updatedValues[passwordIndex] = bcrypt.hash(newPassword, 10)
+        }
+
         var updateFieldString = "";
 
         AccountService.updateColumns.forEach(function(column, index){

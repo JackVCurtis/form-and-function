@@ -81,6 +81,7 @@ class Form extends React.Component {
 
             if (touchedIndex == this.state.form.fields.length - 1) {
                 touchedInput.shouldValidate = true;
+                this.setState(this.state);
                 await this.validate();
             } else {
                 this.setState(this.state);
@@ -108,7 +109,6 @@ class Form extends React.Component {
             this.state.form.fields.forEach((input) => {
                 input.errors = [];
             });
-
             const results = await ValidatorService.validate(validationObject, validations, this.endpoint);
 
             this.inputsToValidate().forEach((input) => {
