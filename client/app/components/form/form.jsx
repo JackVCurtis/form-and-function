@@ -119,9 +119,11 @@ class Form extends React.Component {
                     }
                 }).filter((err) => { return !!err; });
 
-                input.errors = errors;
-                input.shouldValidate = errors.length > 0;
-                input.beenValidated = errors.length == 0;
+                if (!this.isOptionalAndEmpty(input) || this.referencesOther(input)) {
+                    input.errors = errors;
+                    input.shouldValidate = errors.length > 0;
+                    input.beenValidated = errors.length == 0;
+                }
             });
 
             this.state.form.isValid = results.filter((result) => {return !result.result}).length == 0;
@@ -143,9 +145,10 @@ class Form extends React.Component {
 
         this.state.form.fields.forEach((field) => {
             const nextField = nextProps.definition.fields.find((nextField) => { return nextField.name == field.name })
+            field.shouldValidate = field.value != nextField.default
             field.value = nextField.default
         })
-        this.setState(this.state)
+        await this.validate()
     }
 
     async fetchValidations() {
@@ -159,8 +162,17 @@ class Form extends React.Component {
                 }
             })
             this.validations = res.data.validations;
-        } catch (e) {
 
+            this.validations.forEach((validation) => {
+                if (validation.validators.findIndex((v) => v == "exists") < 0) {
+                    const field = this.state.form.fields.find((field) => {
+                        return field.name == validation.fields[0] // assuming one field per validation; refactoring to make this explicit in the object later
+                    })
+                    field.optional = true
+                }
+            })
+        } catch (e) {
+            console.log(e)
         }
     }
 
@@ -176,6 +188,7 @@ class Form extends React.Component {
             def.errors = []
             def.shouldValidate = false
             def.beenValidated = false
+            def.optional = false
         });
     }
 
@@ -192,7 +205,7 @@ class Form extends React.Component {
 
     canSubmit() {
         return this.state.form.fields.reduce((acc, field) => { 
-            return field.beenValidated && acc
+            return (field.beenValidated || this.isOptionalAndEmpty(field)) && acc
         }, true);
     }
 
@@ -206,7 +219,28 @@ class Form extends React.Component {
     }
 
     inputsToValidate() {
-        return this.state.form.fields.filter((input) => { return input.shouldValidate; });
+        return this.state.form.fields.filter((input) => { 
+            const reference = this.referencesOther(input)
+            return input.shouldValidate || (reference && reference.shouldValidate); 
+        });
+    }
+
+    isOptionalAndEmpty(field) {
+        const value = field.value
+        return field.optional && (!value || value == undefined || value.length == 0)
+    }
+
+    referencesOther(field) {
+        const validation = this.validations.find((v) => v.fields[0] == field.name)
+        const matchValidation = validation.validators.find((v) => !!v.match(/\$/))
+        if (matchValidation) {
+            let fieldToMatch = matchValidation.split(":").find((arg) => {
+                return !!arg.match(/^\$/)
+            })
+            return fieldToMatch && this.state.form.fields.find((field) => field.name == fieldToMatch.replace("$", ""))
+        } else {
+            return false
+        }
     }
 };
 
