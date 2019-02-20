@@ -42,7 +42,7 @@ const ValidatorService = {
 
                         resultPromise.then((r) => {
                             resolvedResults.push(r);
-                            resolvedResultPromises = allResultPromises.filter((p) => {return !p.isPending(); })
+                            const resolvedResultPromises = allResultPromises.filter((p) => {return !p.isPending(); })
 
                             if (allResultPromises.length == resolvedResultPromises.length) {
                                 resolve(resolvedResults);
