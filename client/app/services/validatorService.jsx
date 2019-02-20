@@ -1,58 +1,28 @@
 import axios from "axios";
+const ValidatorService = require('../../../shared/validatorService.js');
 
-const syncValidators = require('../../../shared/syncValidators.js');
-
-const ValidatorService = {
-    validate: async function(object, validations, endpoint) {
-        const hasAsyncValidations = validations
-            .flatMap((validation) => { return validation.validators; })
-            .filter((validator) => { return !validators.hasOwnProperty(validator.split(":")[0])});
-
-        var results;
-        
-        if (hasAsyncValidations.length) {
-            const callParams = endpoint.split(" ");
-            try {
-                const res = await axios({
-                    method: callParams[0],
-                    url: callParams[1],
-                    data: {
-                        meta_request: "validate",
-                        fields: object
-                    }
-                });
-
-                results = res.data;
-            } catch (e) {
-                
-            }
-        } else {
-            results = new Promise((resolve, reject) => {
-                const syncResults = validations.flatMap((validation) => {
-                    return validation.validators.map((validator, i) => {
-                        const values = validation.fields.map(function(field) { return object[field]; });
-                        const validatorArray = validator.split(":");
-                        const validationFunction = validatorArray[0];
-                        const validatorArgs = (validatorArray.length > 1 ? validatorArray[1].split(",") : [])
-                            .map((arg) => { return arg.match(/^\$/) ? object[arg.match(/(?<=\$)[\w]+/)[0]] : arg});
-                        const args = values.concat(validatorArgs);
-
-                        if (validators.hasOwnProperty(validationFunction)) {
-                            return {fields: validation.fields, validator: validator, result:validators[validationFunction](...args), message: validation.messages[i]};
-                        } else {
-                            reject(new Error("Missing validation"));
-                        }
-                    });
-                });
-
-                resolve(syncResults);
-            });
-        }
-
-        return results;
+class ClientValidator extends ValidatorService {
+    constructor(){
+        super()
     }
-};
 
-const validators = syncValidators;
+    async validateAsync(object, validations, endpoint) {
+        const callParams = endpoint.split(" ");
+        try {
+            const res = await axios({
+                method: callParams[0],
+                url: callParams[1],
+                data: {
+                    meta_request: "validate",
+                    fields: object
+                }
+            });
 
-export default ValidatorService;
+            return res.data;
+        } catch (e) {
+            throw new Error("Error requesting validation from server")
+        }
+    }
+}
+
+export default new ClientValidator()

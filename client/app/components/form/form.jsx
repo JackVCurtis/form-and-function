@@ -106,6 +106,7 @@ class Form extends React.Component {
             });
 
             const results = await ValidatorService.validate(validationObject, validations, this.endpoint);
+
             this.inputsToValidate().forEach((input) => {
                 const errors = results.map((result) => {
                     if (result.result == false && 
