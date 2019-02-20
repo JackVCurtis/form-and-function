@@ -6,14 +6,14 @@ module.exports = function (metadata) {
            res.status(200).json(metadata);
        } else if (req.body.meta_request == "validate" || req.params.meta_request == "validate") {
             try {
-               const validations = await ValidatorService.validate(req.body.fields, metadata.validations);
+               const validations = await ValidatorService.validate(req.body.fields, metadata.validations, "", req.params);
                res.status(200).json(validations); 
             } catch (e) {
                 console.log(e);
                 res.status(400).json(e);
             }
        } else if (req.body.meta_request == undefined) {
-           const validations = await ValidatorService.validate(req.body, metadata.validations);
+           const validations = await ValidatorService.validate(req.body, metadata.validations, "", req.params);
            const errors = validations.filter((validation) => !validation.result)
            if (errors.length) {
                res.status(400).json(errors);

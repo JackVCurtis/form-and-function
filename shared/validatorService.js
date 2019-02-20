@@ -40,7 +40,7 @@ module.exports = class ValidatorService {
             .filter((validator) => { return !this.validators.hasOwnProperty(validator) }).length > 0
     }
 
-    validate(object, validations, endpoint) {
+    validate(object, validations, endpoint, params) {
         if (this.asyncValidators == undefined && this.containsAsync(validations)) {
             return this.validateAsync(object, validations, endpoint)
         }
@@ -58,7 +58,8 @@ module.exports = class ValidatorService {
                             const validatorArray = validator.split(":");
                             const validationFunction = validatorArray[0];
                             const validatorArgs = (validatorArray.length > 1 ? validatorArray[1].split(",") : [])
-                                .map((arg) => { return arg.match(/^\$/) ? object[arg.match(/(?<=\$)[\w]+/)[0]] : arg});
+                                .map((arg) => { return arg.match(/^\$/) ? object[arg.match(/(?<=\$)[\w]+/)[0]] : arg})
+                                .map((arg) => { return arg.match(/^\#/) ? params[arg.match(/(?<=\#)[\w]+/)[0]] : arg})
                             const args = values.concat(validatorArgs);
                             
                             if (this.validators.hasOwnProperty(validationFunction)) {

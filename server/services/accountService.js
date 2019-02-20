@@ -31,8 +31,10 @@ const AccountService = {
 
         try {
             const result = await pool.query(queryString, values);
-            return AccountService.toJson(result.rows[0]);            
+            console.log("saved: ", result)
+            return AccountService.toJson(result.rows[0]);
         } catch (error) {
+            console.log(error)
             throw error;
         }
     },

@@ -27,15 +27,19 @@ class Form extends React.Component {
         this.state = {
             form: {
                 submitText: props.definition.submitText,
-                fields: this.generateFields(props.definition)
+                fields: props.definition.fields
             }
         }
+
+        this.generateFields()
+
         this.submitFunction = props.handleSubmit;
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleBlur = this.handleBlur.bind(this);
         this.getValue = this.getValue.bind(this);
         this.getComponent = this.getComponent.bind(this);
+        this.fetchValidations = this.fetchValidations.bind(this)
     }
 
     render() {
@@ -126,6 +130,25 @@ class Form extends React.Component {
     }
 
     async componentDidMount(){
+        if (this.endpoint.split && this.endpoint.split(" ").length > 1) {
+            await this.fetchValidations()            
+        }
+    }
+
+    async componentWillReceiveProps(nextProps){
+        if (this.endpoint != nextProps.endpoint) {
+            this.endpoint = nextProps.endpoint
+            await this.fetchValidations()
+        }
+
+        this.state.form.fields.forEach((field) => {
+            const nextField = nextProps.definition.fields.find((nextField) => { return nextField.name == field.name })
+            field.value = nextField.default
+        })
+        this.setState(this.state)
+    }
+
+    async fetchValidations() {
         const reqParams = this.endpoint.split(" ");
         try {
             const res = await axios({
@@ -137,7 +160,7 @@ class Form extends React.Component {
             })
             this.validations = res.data.validations;
         } catch (e) {
-            console.log("Could not fetch validations");
+
         }
     }
 
@@ -147,17 +170,12 @@ class Form extends React.Component {
         }
     }
 
-    generateFields(definition) {
-        return definition.fields.map((def) => {
-            return  {
-                name: def.name,
-                label: def.label,
-                type: def.type,
-                value: def.default,
-                errors: [],
-                shouldValidate: false,
-                beenValidated: false,
-            }
+    generateFields() {
+        this.state.form.fields.forEach((def) => {
+            def.value = def.default
+            def.errors = []
+            def.shouldValidate = false
+            def.beenValidated = false
         });
     }
 

@@ -26,13 +26,13 @@ class Login extends React.Component {
             ]
         };
 
-        this.state = {loggedIn: AuthService.isLoggedIn(), loginError: false};
+        this.state = {loginError: false};
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     render() {
-        return this.state.loggedIn ? (<Redirect to="/"/>) : (
+        return this.props.loggedIn ? (<Redirect to="/"/>) : (
             <div>
                 <h2>Login</h2>
                 
@@ -53,12 +53,10 @@ class Login extends React.Component {
 
     async handleSubmit(values) {
         try {
-            await AccountService.login(values.email, values.password);
-            this.state.loggedIn = AuthService.isLoggedIn();
-            this.setState(this.state);
+            await AccountService.login(values.email, values.password)
+            this.props.updateLoginStatus()
         } catch (err) {
-            this.state.loginError = true;
-            this.setState(this.state);
+            this.setState({loginError: true});
             console.log(err);
         }
 

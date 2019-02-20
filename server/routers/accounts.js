@@ -24,6 +24,7 @@ accountRouter.route('/accounts')
         async function(req, res) {
             try {
                 const account = await AccountService.create(req.body);
+                console.log(account)
                 const token = jwt.sign({sub: account.id}, process.env.JWT_SECRET);
                 res.cookie('authorization',token);
                 res.json(account);            
@@ -49,7 +50,18 @@ accountRouter.route('/accounts/:id')
             res.status(error.status).send(error);
         }
     })
-    .put(
+    .put(supportMeta({
+            validations: [
+                {
+                    fields: ["email"], 
+                    validators: ["isUniqueOrMatches:accounts,email,id,#id", "exists", "isEmailFormat"],
+                    messages: ["Email is already in use", "An email is required", "Please enter a valid email"]
+                },
+                {fields: ["name"], validators: ["exists"], messages: ["A name is required"]},
+                {fields: ["password"], validators: ["isSecurePass"], messages: ["Password must be at least 12 characters"]},
+                {fields: ["confirmPassword"], validators: ["matches:$password"], messages: ["Password and Confirm Password fields don't match"]}
+            ]
+        }),
         async function(req, res) {
             try {
                 const account = await AccountService.update(req.params.id, req.body);

@@ -1,9 +1,7 @@
 import React from 'react';
 import {Redirect, Link} from 'react-router-dom';
 import axios from 'axios';
-import AccountService from '../services/account.jsx';
-import AuthService from '../services/auth.jsx';
-import ValidatorService from '../services/validatorService.jsx';
+import AccountService from '../services/account.jsx'
 import Form from './form/form.jsx';
 
 class Signup extends React.Component {
@@ -40,15 +38,11 @@ class Signup extends React.Component {
 
         };
 
-        this.state = {
-            signedUp: false
-        };
-
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     render() {
-        return this.state.signedUp ? (<Redirect to="/"/>) : (
+        return this.props.loggedIn ? (<Redirect to="/"/>) : (
                 <div>
                     <h2>Signup</h2>
                     
@@ -60,13 +54,8 @@ class Signup extends React.Component {
     }
 
     async handleSubmit(values) {
-        try {
-            await AccountService.signup(values);
-            this.state.signedUp = true;
-            this.setState(this.state);
-        } catch (err) {
-
-        }
+        await AccountService.signup(values)
+        this.props.updateLoginStatus()
     }
 };
 
