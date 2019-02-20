@@ -12,6 +12,11 @@ const AuthService = {
         return getCookie('authorization');
     },
 
+    logout: () => {
+        deleteCookie('authorization')
+        window.location.reload(false); 
+    },
+
     getUser: () => {
         if (AuthService.user) { 
             return AuthService.user
@@ -31,6 +36,15 @@ const AuthService = {
 function getCookie(name) {
     var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
     return v ? v[2] : null;
+}
+
+function deleteCookie( name, path, domain ) {
+  if( getCookie( name ) ) {
+    document.cookie = name + "=" +
+      ((path) ? ";path="+path:"")+
+      ((domain)?";domain="+domain:"") +
+      ";expires=Thu, 01 Jan 1970 00:00:01 GMT";
+  }
 }
 
 export default AuthService;
